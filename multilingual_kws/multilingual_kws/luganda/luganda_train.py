@@ -15,8 +15,8 @@ from typing import List
 
 import numpy as np
 
-from embedding import word_extraction, transfer_learning
-from embedding import batch_streaming_analysis as sa
+from multilingual_kws.embedding import word_extraction, transfer_learning
+from multilingual_kws.embedding import batch_streaming_analysis as sa
 import input_data
 
 import sklearn.model_selection

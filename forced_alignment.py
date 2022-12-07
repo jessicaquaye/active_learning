@@ -9,21 +9,22 @@ def populate_t_and_nt_audios(df, clips_dir, target_clips, non_target_clips, KEYW
     files_w_key = df[ df['sentence'].str.contains(KEYWORD).fillna(False) ]
     files_wout_key = df[ ~df['sentence'].str.contains(KEYWORD).fillna(False) ]
 
-    #select 50 target and non-target that will be used for test
+    #select target and non-target that will be used for training
     target = list(files_w_key['path'])[:NUM_OF_CLIPS_PER_CATEGORY]
     non_target = list(files_wout_key['path'])[:NUM_OF_CLIPS_PER_CATEGORY]
 
-    # print("target clips size: ", len(target))
-    # print("non target clips size: ", len(non_target))
+    print("target clips size: ", len(target))
+    print("non target clips size: ", len(non_target))
 
     #copy audio clips into respective folders
     print("iterating through target files")
     for fname in target:
-
-        shutil.copy2(clips_dir / fname, target_clips / fname)
+        if os.path.exists(clips_dir / fname):
+            shutil.copy2(clips_dir / fname, target_clips / fname)
     print("iterating through non_target files")
     for fname in non_target:
-        shutil.copy2(clips_dir / fname, non_target_clips / fname)
+        if os.path.exists(clips_dir / fname):
+            shutil.copy2(clips_dir / fname, non_target_clips / fname)
     return [(target_clips, target), (non_target_clips, non_target)]
 
 def create_word_labs(df, KEYWORD, data_and_aligns, clips_of_interest_list, clips_dir):
@@ -48,11 +49,12 @@ def create_word_labs(df, KEYWORD, data_and_aligns, clips_of_interest_list, clips
         with open( lab_file, "w", encoding="utf8") as fh:
             fh.write(transcript)
 
-        shutil.copy2(clips_dir / fname, word_labs / basename) #copy audio to world lab dir
-        shutil.copy2(clips_dir / fname, data_and_aligns / "data") #copy audio to data and aligns
-        shutil.copy2(lab_file, data_and_aligns / "data") #copy lab to data and aligns
-        written += 1
-        print(f"labs written: {written}")
+        if os.path.exists(clips_dir / fname):
+            shutil.copy2(clips_dir / fname, word_labs / basename) #copy audio to world lab dir
+            shutil.copy2(clips_dir / fname, data_and_aligns / "data") #copy audio to data and aligns
+            shutil.copy2(lab_file, data_and_aligns / "data") #copy lab to data and aligns
+            written += 1
+            print(f"labs written: {written}")
 
         for w in transcript.split(" "):
             all_words_in_src.add( w.lower() ) #cast to lower case to standardize words
@@ -82,9 +84,11 @@ def extract_from_tsv(tsv_path, clips_dir, target_clips, non_target_clips, data_a
     all_words = set()
 
     _, target_list = result[0]
+    print("target list from pop t: ", len(target_list))
     all_target_words = create_word_labs(df, KEYWORD, data_and_aligns, target_list, clips_dir)
 
     _, non_target_list = result[1]
+    print("non target list from pop nt: ", len(non_target_list))
     all_ntarget_words = create_word_labs(df, KEYWORD, data_and_aligns, non_target_list, clips_dir)
 
     #CREATE LEXICONS
@@ -101,7 +105,7 @@ def generate_mfas(KEYWORD, NUM_OF_CLIPS_PER_CATEGORY):
     base_dir = os.path.dirname(abs_path) + "/"
     clips_dir = Path(base_dir + "cv-corpus-wav/clips/")
 
-    #initialize folders
+    # initialize folders
     target_clips = Path(KEYWORD + '/target/')
     os.makedirs(target_clips)
     non_target_clips = Path(KEYWORD +'/non_target/')
