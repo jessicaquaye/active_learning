@@ -1,5 +1,6 @@
 import create_stream as cs
 import datetime
+import json
 import multiprocessing
 import numpy as np
 import os
@@ -34,8 +35,8 @@ def train_model(KEYWORD, iteration_num, train_samples, dev_samples, non_target_s
         # rand_dev_samples = rng.choice(target_fnames, NUM_DEV_SAMPLES, replace=False)
         # dev_paths = [ one_s_path + fname for fname in rand_dev_samples]
 
-        NUM_TRAIN_SAMPLES = 540
-        NUM_DEV_SAMPLES = 48
+        NUM_TRAIN_SAMPLES = 10
+        NUM_DEV_SAMPLES = 10
         one_s_path = base_dir + KEYWORD + "/one_s/"
         target_fnames = os.listdir(one_s_path)
         train_paths = [one_s_path + fname for fname in target_fnames[:NUM_TRAIN_SAMPLES]]
@@ -62,6 +63,7 @@ def train_model(KEYWORD, iteration_num, train_samples, dev_samples, non_target_s
 
         #define base_model_path
         base_model_path = resources_dir + "embedding_model/multilingual_context_73_0.8011"
+        base_model_output = "dense_2"
 
     else: #iteration building upon previous model
 
@@ -87,13 +89,16 @@ def train_model(KEYWORD, iteration_num, train_samples, dev_samples, non_target_s
         #read prev unknown paths and update with curr non_target paths
         prev_non_target_content = open(KEYWORD + "/non_target_files.txt", "r").read()
         prev_non_target_paths = eval(prev_non_target_content)
-        non_target_paths = prev_non_target_paths + non_target_samples
+        unknown_files = prev_non_target_paths + non_target_samples
 
         with open(KEYWORD + "/non_target_files.txt", "w") as unknown_f:
-            unknown_f.write(str(non_target_paths))
+            unknown_f.write(str(unknown_files))
 
         #select previous model as base for training with a new data input
-        base_model_path = base_dir + KEYWORD + "/v_" + str(iteration_num - 1) + "/" + KEYWORD + "_5shot"
+        # base_model_path = base_dir + KEYWORD + "/v_" + str(iteration_num - 1) + "/" + KEYWORD + "_5shot"
+        # base_model_output = "dense_1"
+        base_model_path = resources_dir + "embedding_model/multilingual_context_73_0.8011"
+        base_model_output = "dense_2"
 
     print("---Training model---")
     model_settings = input_data.standard_microspeech_model_settings(3)
@@ -110,13 +115,13 @@ def train_model(KEYWORD, iteration_num, train_samples, dev_samples, non_target_s
         embedding_lr=0,
         model_settings=model_settings,
         base_model_path=base_model_path,
-        base_model_output="dense_2",
+        base_model_output=base_model_output,
         UNKNOWN_PERCENTAGE=50.0,
         bg_datadir=background_noise,
         csvlog_dest=None,
     )
 
-    os.makedirs(base_dir + KEYWORD + "/v_" + str(iteration_num))
+    # os.makedirs(base_dir + KEYWORD + "/v_" + str(iteration_num))
     model.save(base_dir + KEYWORD + "/v_" + str(iteration_num) + "/" + KEYWORD + "_5shot")
 
     return
@@ -138,6 +143,24 @@ class SweepData:
     target: str
     stream_target: sa.StreamTarget
     batch_size: int = 64
+
+    def create_dict(self):
+        sd_dict = {}
+        sd_dict['train_files'] = [str(file) for file in self.train_files]
+        sd_dict['val_files'] = [str(file) for file in self.val_files]
+        sd_dict['n_batches'] = self.n_batches
+        sd_dict['n_epochs'] = self.n_epochs
+        sd_dict['model_dest_dir'] = str(self.model_dest_dir)
+        sd_dict['dest_pkl'] = str(self.dest_pkl)
+        sd_dict['dest_inf'] = str(self.dest_inf)
+        sd_dict['primary_lr'] = self.primary_lr
+        sd_dict['backprop_into_embedding'] = self.backprop_into_embedding
+        sd_dict['embedding_lr'] = self.embedding_lr
+        sd_dict['with_context'] = self.with_context
+        sd_dict['target'] = self.target
+        sd_dict['stream_target'] = self.stream_target
+        sd_dict['batch_size'] = self.batch_size
+        return sd_dict
 
 
 def sweep_run(sd: SweepData, q, iteration_num, init, non_target_samples):
@@ -166,13 +189,18 @@ def sweep_run(sd: SweepData, q, iteration_num, init, non_target_samples):
         #read prev unknown paths and update with curr non_target paths
         prev_non_target_content = open(KEYWORD + "/non_target_files.txt", "r").read()
         prev_non_target_paths = eval(prev_non_target_content)
-        non_target_paths = prev_non_target_paths + non_target_samples
+        # print(type(prev_non_target_paths), prev_non_target_paths)
+        # print(type(non_target_samples), non_target_samples)
+        unknown_files = prev_non_target_paths + non_target_samples
 
         with open(KEYWORD + "/non_target_files.txt", "w") as unknown_f:
-            unknown_f.write(str(non_target_paths))
+            unknown_f.write(str(unknown_files))
 
         #select previous model as base for training with a new data input
-        base_model_path = base_dir + KEYWORD + "/v_" + str(iteration_num - 1) + "/" + KEYWORD + "_5shot"
+        print(sd.model_dest_dir)
+        # base_model_path = base_dir + KEYWORD + "/v_" + str(iteration_num - 1) + "/export/exp_01/fold_00/xfer_epochs_4_bs_64_nbs_2_val_acc_0.75_target_" + KEYWORD
+        # base_model_path = base_dir + KEYWORD + "/v_" + str(iteration_num - 1) + "/" + KEYWORD + "_5shot"
+        base_model_path = resources_dir + "embedding_model/multilingual_context_73_0.8011"
 
 
     model_settings = input_data.standard_microspeech_model_settings(3)
@@ -207,7 +235,7 @@ def sweep_run(sd: SweepData, q, iteration_num, init, non_target_samples):
     print("VAL ACCURACY", val_accuracy)
 
     start = datetime.datetime.now()
-    sa.eval_stream_test(sd.stream_target, live_model=model)
+    sa.eval_stream_test(sd.stream_target, live_model=model) #needed to put it in a list to serialize
     end = datetime.datetime.now()
     print("time elapsed (for all thresholds)", end - start)
 
@@ -266,7 +294,7 @@ def execute_sweep_run(KEYWORD, iteration_num, train_samples, dev_samples, non_ta
     t = train_paths
     v = dev_paths
 
-    print("---------NUM TRAINING SAMPLES\n", len(train_samples))
+    print("---------NUM TRAINING SAMPLES\n", len(train_paths))
     streaming_wav = base_dir + KEYWORD + "/v_" + str(iteration_num) + "/streaming/" + KEYWORD + "_stream.wav" 
     assert os.path.isfile(streaming_wav), "no stream wav"
 
@@ -343,9 +371,13 @@ def execute_sweep_run(KEYWORD, iteration_num, train_samples, dev_samples, non_ta
         sweep_datas.append(sd)
 
         # overwrite on every experiment
-        with open(mdd / "sweep_data.pkl", "wb") as fh:
-            d = dict(sweep_datas=sweep_datas, val_accuracies=val_accuracies)
-            # fh.write(json.dumps(d))
-            p
+        # with open(mdd / "sweep_data.pkl", "wb") as fh:
+        #     d = dict(sweep_datas=sweep_datas, val_accuracies=val_accuracies)
+        #     fh.write(json.dumps(d))
 
+        with open(mdd / "sweep_data.txt", "w") as fh:
+            d = dict(sweep_datas=sweep_datas, val_accuracies=val_accuracies)
+            fh.write(str(d))
+        fh.close()
+            
     return

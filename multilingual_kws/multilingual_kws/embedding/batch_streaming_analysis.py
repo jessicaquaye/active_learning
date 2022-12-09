@@ -46,6 +46,23 @@ class StreamFlags:
             self.target_keyword,
         ]
 
+    def create_dict(self):
+        sf_dict = {}
+
+        sf_dict['wav'] = str(self.wav)
+        sf_dict['ground_truth'] = str(self.ground_truth)
+        sf_dict['target_keyword'] = self.target_keyword
+        sf_dict['detection_thresholds'] = self.detection_thresholds
+        sf_dict['clip_duration_ms'] = self.clip_duration_ms
+        sf_dict['clip_stride_ms'] = self.clip_stride_ms
+        sf_dict['average_window_duration_ms'] = self.average_window_duration_ms
+        sf_dict['suppression_ms'] = self.suppression_ms
+        sf_dict['time_tolerance_ms'] = self.time_tolerance_ms
+        sf_dict['minimum_count'] = self.minimum_count
+        sf_dict['max_chunk_length_sec'] = self.max_chunk_length_sec
+
+        return sf_dict
+
 
 def calculate_streaming_accuracy(
     model, model_settings, flag_list, existing_inferences=None
@@ -210,6 +227,25 @@ class StreamTarget:
     stream_flags: StreamFlags
     destination_result_pkl: Optional[os.PathLike] = None
     destination_result_inferences: Optional[os.PathLike] = None
+
+    def create_dict(self):
+        st_dict = {}
+        st_dict['target_lang'] = self.target_lang
+        st_dict['target_word'] = self.target_word
+        st_dict['model_path'] = str(self.model_path)
+        st_dict['stream_flags'] = self.stream_flags
+
+        if self.destination_result_pkl is not None:
+            st_dict['destination_result_pkl'] = [str(file) for file in self.destination_result_pkl]
+        else:
+            st_dict['destination_result_pkl'] = None
+
+        if self.destination_result_inferences is not None:
+            st_dict['destination_result_inferences'] = [str(file) for file in self.destination_result_inferences]
+        else:
+            st_dict['destination_result_inferences'] = None
+
+        return st_dict
 
 
 def eval_stream_test(st: StreamTarget, live_model=None):

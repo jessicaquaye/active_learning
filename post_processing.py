@@ -98,17 +98,17 @@ def update_training_txt(KEYWORD, iteration_num):
     #update training files with targets
     train_path = base_dir + KEYWORD + "/training_files.txt"
     train_content = eval(open(train_path, "r").read())
-    updated_train = train_content + os.listdir(nc_target)
+    updated_train = train_content + [str(nc_target) + fname for fname in  os.listdir(nc_target)]
 
     with open(train_path, "w") as train_f:
-        train_f.write(updated_train)
+        train_f.write(str(updated_train))
 
     #update unknown files with non_targets
     non_target_path = base_dir + KEYWORD + "/non_target_files.txt"
     non_target_content = eval(open(non_target_path, "r").read())
-    updated_non_target = non_target_content + os.listdir(nc_non_target)
+    updated_non_target = non_target_content + [str(nc_non_target) + fname for fname in os.listdir(nc_non_target)]
 
     with open(non_target_path, "w") as non_target_f:
-        non_target_f.write(updated_non_target)
+        non_target_f.write(str(updated_non_target))
 
     return

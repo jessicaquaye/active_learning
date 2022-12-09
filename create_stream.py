@@ -30,48 +30,65 @@ def create_stream(KEYWORD, NUM_OF_CLIPS_PER_CATEGORY, iteration_num, init, use_t
     base_dir = os.path.dirname(abs_path) + "/"
     clips_dir = Path(base_dir + "cv-corpus-wav/clips/")
 
-    # test_tsv = 'cv-corpus-wav/test.tsv'
-    # test_df = pd.read_csv(test_tsv, sep='\t').set_index("path", drop = False)
+    test_tsv = 'cv-corpus-wav/test.tsv'
+    test_df = pd.read_csv(test_tsv, sep='\t').set_index("path", drop = False)
 
     train_tsv = 'cv-corpus-wav/train.tsv'
     train_df = pd.read_csv(train_tsv, sep='\t').set_index("path", drop = False)
 
     # #remove wavs that have been seen to avoid repeats
-    # testing_file_name = KEYWORD + "/testing_files.txt"
-    # curr_testing_list = []
-    # if not init: #not initial stream. remove already seen files.
-    #     curr_testing_list = eval(open(testing_file_name, "r").read())
-    #     for fpath in curr_testing_list:
-    #         fname = os.path.basename(fpath)
-    #         test_df = test_df.drop(index=fname)#remove wavs that have been seen to avoid repeats
-
-    #remove wavs that have been seen to avoid repeats
     training_file_name = KEYWORD + "/training_files.txt"
-    curr_training_list = []
+    curr_testing_list = []
     if not init: #not initial stream. remove already seen files.
-        curr_training_list = eval(open(training_file_name, "r").read())
-        for fpath in curr_training_list:
+        curr_testing_list = eval(open(training_file_name, "r").read())
+        for fpath in curr_testing_list:
             fname = os.path.basename(fpath)
-            train_df = train_df.drop(index=fname)
+            row_df = test_df.loc[(test_df['path'] == fname)]
+            if row_df.empty: #not in testing, must be in training
+                row_df = train_df.loc[(train_df['path'] == fname)]
+                if row_df.empty: #weird file name
+                    continue
+                train_df = train_df.drop(index=fname)
+            else:
+                test_df = test_df.drop(index=fname)#remove wavs that have been seen to avoid repeats
+
+    # #remove wavs that have been seen to avoid repeats
+    # training_file_name = KEYWORD + "/training_files.txt"
+    # curr_training_list = []
+    # if not init: #not initial stream. remove already seen files.
+    #     curr_training_list = eval(open(training_file_name, "r").read())
+    #     for fpath in curr_training_list:
+    #         fname = os.path.basename(fpath)
+    #         train_df = train_df.drop(index=fname)
         # print("len before stream created: ", len(curr_testing_list))
 
-    #extract target and non-target
+    # extract target and non-target
     # files_w_key = test_df[ test_df['sentence'].str.contains(KEYWORD).fillna(False) ]
     # files_wout_key = test_df[ ~test_df['sentence'].str.contains(KEYWORD).fillna(False) ]
 
-    # # select random wavs for target words
+    # select random wavs for target words
     # targets = list(files_w_key['path'])
     # rand_targets = random.sample(range(0, len(targets)), NUM_OF_CLIPS_PER_CATEGORY)
     # targets = [targets[idx] for idx in rand_targets]
     # target_transcript_list = []
     
-    #extract target and non-target
+    # #extract target and non-target
     files_w_key = train_df[ train_df['sentence'].str.contains(KEYWORD).fillna(False) ]
     files_wout_key = train_df[ ~train_df['sentence'].str.contains(KEYWORD).fillna(False) ]
 
     # select wavs 
     targets = os.listdir(base_dir + KEYWORD + "/target")
     non_targets = os.listdir(base_dir + KEYWORD + "/non_target")
+
+    # targets = list(files_w_key['path'])
+    # rand_targets = random.sample(range(0, len(targets)), NUM_OF_CLIPS_PER_CATEGORY)
+    # targets = [targets[idx] for idx in rand_targets]
+    # target_transcript_list = []
+
+    # non_targets = list(files_wout_key['path'])
+    # rand_non_targets = random.sample(range(0, len(non_targets)), NUM_OF_CLIPS_PER_CATEGORY)
+    # non_targets = [non_targets[idx] for idx in rand_non_targets]
+    # non_target_transcript_list = []
 
     if use_train_data:
         targets = get_all_train_files(targets)
@@ -82,35 +99,54 @@ def create_stream(KEYWORD, NUM_OF_CLIPS_PER_CATEGORY, iteration_num, init, use_t
     targets = [targets[idx] for idx in rand_targets]
     target_transcript_list = []
 
-    # select rand non targets
+    # # select rand non targets
     rand_non_targets = random.sample(range(0, len(non_targets)), NUM_OF_CLIPS_PER_CATEGORY)
     non_targets = [non_targets[idx] for idx in rand_non_targets]
     non_target_transcript_list = []
 
-    # for fname in targets: #populate (target, transcript) list
-    #     row = test_df.loc[(test_df['path'] == fname)]
-    #     transcript = row['sentence'].values[0].split('\t')[0]
-    #     target_transcript_list.append((fname,transcript))
-    #     # print("selected targets: ", target_transcript_list)
+    for fname in targets: #populate (target, transcript) list
+        if len(fname.split('_')) == 5: #newly created one_s target
+            remove_seconds_stamp = fname.split('_')[-1]
+            fname = '_'.join(remove_seconds_stamp) + '.wav'
+
+        row_df = test_df.loc[(test_df['path'] == fname)]
+        if row_df.empty: #not in test so definitely in train
+            print ("not in test")
+            row_df = train_df.loc[(train_df['path'] == fname)]
+            if row_df.empty:
+                print("not in train")
+                continue
+           
+        transcript = row_df['sentence'].values[0].split('\t')[0]
+        target_transcript_list.append((fname,transcript))
+        # print("selected targets: ", target_transcript_list)
 
     
-    for fpath in targets: #populate (target, transcript) list
-        fname = Path(fpath).stem + ".wav"
-        row = train_df.loc[(train_df['path'] == fname)]
-        transcript = row['sentence'].values[0].split('\t')[0]
-        target_transcript_list.append((fname,transcript))
+    # for fpath in targets: #populate (target, transcript) list
+    #     fname = Path(fpath).stem + ".wav"
+    #     row = train_df.loc[(train_df['path'] == fname)]
+    #     transcript = row['sentence'].values[0].split('\t')[0]
+    #     target_transcript_list.append((fname,transcript))
 
-    # for fname in non_targets: #populate (non-target, transcript) list
-    #     row = test_df.loc[(test_df['path'] == fname)]
+    for fname in non_targets: #populate (non-target, transcript) list
+        if len(fname.split('_')) == 5: #newly created one_s target
+            remove_seconds_stamp = fname.split('_')[-1]
+            fname = '_'.join(remove_seconds_stamp) + '.wav'
+
+        row_df = test_df.loc[(test_df['path'] == fname)]
+        if row_df.empty: #not in test so definitely in train
+            row_df = train_df.loc[(train_df['path'] == fname)]
+            if row_df.empty:
+                continue
+        transcript = row_df['sentence'].values[0].split('\t')[0]
+        non_target_transcript_list.append((fname, transcript))
+    print("selected non targets: ", non_target_transcript_list)
+
+    # for fpath in non_targets: #populate (non-target, transcript) list
+    #     fname = Path(fpath).stem + ".wav"
+    #     row = train_df.loc[(train_df['path'] == fname)]
     #     transcript = row['sentence'].values[0].split('\t')[0]
     #     non_target_transcript_list.append((fname, transcript))
-    # print("selected non targets: ", non_target_transcript_list)
-
-    for fpath in non_targets: #populate (non-target, transcript) list
-        fname = Path(fpath).stem + ".wav"
-        row = train_df.loc[(train_df['path'] == fname)]
-        transcript = row['sentence'].values[0].split('\t')[0]
-        non_target_transcript_list.append((fname, transcript))
 
     n_target_wavs = len(target_transcript_list)
     print("num of selected target wavs:", n_target_wavs)
@@ -190,7 +226,7 @@ def create_stream(KEYWORD, NUM_OF_CLIPS_PER_CATEGORY, iteration_num, init, use_t
 
     #update testing.txt with new batch of streaming wavs
     if not init:
-        updated_training_list = curr_training_list + stream_wavs
+        updated_training_list = curr_testing_list + stream_wavs
         # print("len after stream created: ", len(updated_testing_list))
         with open(training_file_name, "w") as training_f:
             training_f.write(str(updated_training_list))
@@ -218,6 +254,8 @@ def generate_ground_truth_timings(KEYWORD, iteration_num):
 
             #find interval where the keyword exists
             tgfile = tg_dir + Path(wav).stem + ".TextGrid"
+            if not os.path.exists(tgfile):
+                continue
             tg = textgrid.TextGrid.fromFile(tgfile)
 
             for interval in tg[0]:
@@ -254,6 +292,8 @@ def generate_ground_label_and_times(KEYWORD, iteration_num, stream_info_file):
 
             #find interval where the keyword exists
             tgfile = tg_dir + Path(wav).stem + ".TextGrid"
+            if not os.path.exists(tgfile):
+                continue
             tg = textgrid.TextGrid.fromFile(tgfile)
 
             for interval in tg[0]:
