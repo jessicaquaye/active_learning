@@ -1,0 +1,4 @@
+abantu,3350.0
+abantu,16128.0
+abantu,38430.0
+abantu,68126.0

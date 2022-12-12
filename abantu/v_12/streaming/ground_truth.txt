@@ -1,0 +1,7 @@
+abantu,5190.0
+abantu,37196.0
+abantu,51098.0
+abantu,60968.0
+abantu,73878.0
+abantu,102158.0
+abantu,127429.99999999999

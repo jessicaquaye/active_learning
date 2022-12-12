@@ -34,7 +34,6 @@ import matplotlib.pyplot as plt
 
 
 
-
 #draw final graph
 abs_path = os.path.abspath(__file__)
 base_dir = os.path.dirname(abs_path) + "/"
