@@ -1,0 +1,84 @@
+File type = "ooTextFile"
+Object class = "TextGrid"
+
+xmin = 0 
+xmax = 7.776 
+tiers? <exists> 
+size = 2 
+item []: 
+    item [1]:
+        class = "IntervalTier" 
+        name = "words" 
+        xmin = 0 
+        xmax = 7.776 
+        intervals: size = 8 
+        intervals [1]:
+            xmin = 0 
+            xmax = 1.14 
+            text = "" 
+        intervals [2]:
+            xmin = 1.14 
+            xmax = 3.38 
+            text = "omwogezi" 
+        intervals [3]:
+            xmin = 3.38 
+            xmax = 4.25 
+            text = "w'ekibiina" 
+        intervals [4]:
+            xmin = 4.25 
+            xmax = 4.35 
+            text = "" 
+        intervals [5]:
+            xmin = 4.35 
+            xmax = 4.87 
+            text = "okeler" 
+        intervals [6]:
+            xmin = 4.87 
+            xmax = 5.27 
+            text = "opio" 
+        intervals [7]:
+            xmin = 5.27 
+            xmax = 5.64 
+            text = "bw'agambye" 
+        intervals [8]:
+            xmin = 5.64 
+            xmax = 7.776 
+            text = "" 
+    item [2]:
+        class = "IntervalTier" 
+        name = "phones" 
+        xmin = 0 
+        xmax = 7.776 
+        intervals: size = 8 
+        intervals [1]:
+            xmin = 0 
+            xmax = 1.14 
+            text = "" 
+        intervals [2]:
+            xmin = 1.14 
+            xmax = 3.38 
+            text = "spn" 
+        intervals [3]:
+            xmin = 3.38 
+            xmax = 4.25 
+            text = "spn" 
+        intervals [4]:
+            xmin = 4.25 
+            xmax = 4.35 
+            text = "" 
+        intervals [5]:
+            xmin = 4.35 
+            xmax = 4.87 
+            text = "spn" 
+        intervals [6]:
+            xmin = 4.87 
+            xmax = 5.27 
+            text = "spn" 
+        intervals [7]:
+            xmin = 5.27 
+            xmax = 5.64 
+            text = "spn" 
+        intervals [8]:
+            xmin = 5.64 
+            xmax = 7.776 
+            text = "" 

@@ -1,0 +1,92 @@
+File type = "ooTextFile"
+Object class = "TextGrid"
+
+xmin = 0 
+xmax = 4.428 
+tiers? <exists> 
+size = 2 
+item []: 
+    item [1]:
+        class = "IntervalTier" 
+        name = "words" 
+        xmin = 0 
+        xmax = 4.428 
+        intervals: size = 8 
+        intervals [1]:
+            xmin = 0 
+            xmax = 0.87 
+            text = "" 
+        intervals [2]:
+            xmin = 0.87 
+            xmax = 1.42 
+            text = "kawere" 
+        intervals [3]:
+            xmin = 1.42 
+            xmax = 1.72 
+            text = "ku" 
+        intervals [4]:
+            xmin = 1.72 
+            xmax = 2.33 
+            text = "ntondwa" 
+        intervals [5]:
+            xmin = 2.33 
+            xmax = 2.58 
+            text = "" 
+        intervals [6]:
+            xmin = 2.58 
+            xmax = 2.93 
+            text = "ye" 
+        intervals [7]:
+            xmin = 2.93 
+            xmax = 3.42 
+            text = "eluwa" 
+        intervals [8]:
+            xmin = 3.42 
+            xmax = 4.428 
+            text = "" 
+    item [2]:
+        class = "IntervalTier" 
+        name = "phones" 
+        xmin = 0 
+        xmax = 4.428 
+        intervals: size = 10 
+        intervals [1]:
+            xmin = 0 
+            xmax = 0.87 
+            text = "" 
+        intervals [2]:
+            xmin = 0.87 
+            xmax = 1.42 
+            text = "spn" 
+        intervals [3]:
+            xmin = 1.42 
+            xmax = 1.55 
+            text = "k" 
+        intervals [4]:
+            xmin = 1.55 
+            xmax = 1.72 
+            text = "u" 
+        intervals [5]:
+            xmin = 1.72 
+            xmax = 2.33 
+            text = "spn" 
+        intervals [6]:
+            xmin = 2.33 
+            xmax = 2.58 
+            text = "" 
+        intervals [7]:
+            xmin = 2.58 
+            xmax = 2.73 
+            text = "y" 
+        intervals [8]:
+            xmin = 2.73 
+            xmax = 2.93 
+            text = "e" 
+        intervals [9]:
+            xmin = 2.93 
+            xmax = 3.42 
+            text = "spn" 
+        intervals [10]:
+            xmin = 3.42 
+            xmax = 4.428 
+            text = "" 

@@ -1,0 +1,124 @@
+File type = "ooTextFile"
+Object class = "TextGrid"
+
+xmin = 0 
+xmax = 5.94 
+tiers? <exists> 
+size = 2 
+item []: 
+    item [1]:
+        class = "IntervalTier" 
+        name = "words" 
+        xmin = 0 
+        xmax = 5.94 
+        intervals: size = 9 
+        intervals [1]:
+            xmin = 0 
+            xmax = 1.17 
+            text = "" 
+        intervals [2]:
+            xmin = 1.17 
+            xmax = 2.94 
+            text = "kawadwa" 
+        intervals [3]:
+            xmin = 2.94 
+            xmax = 3.09 
+            text = "ye" 
+        intervals [4]:
+            xmin = 3.09 
+            xmax = 3.65 
+            text = "muwandiisi" 
+        intervals [5]:
+            xmin = 3.65 
+            xmax = 3.93 
+            text = "w'emizannyo" 
+        intervals [6]:
+            xmin = 3.93 
+            xmax = 4.38 
+            text = "eyasooka" 
+        intervals [7]:
+            xmin = 4.38 
+            xmax = 4.64 
+            text = "mu" 
+        intervals [8]:
+            xmin = 4.64 
+            xmax = 5.26 
+            text = "ggwanga" 
+        intervals [9]:
+            xmin = 5.26 
+            xmax = 5.94 
+            text = "" 
+    item [2]:
+        class = "IntervalTier" 
+        name = "phones" 
+        xmin = 0 
+        xmax = 5.94 
+        intervals: size = 17 
+        intervals [1]:
+            xmin = 0 
+            xmax = 1.17 
+            text = "" 
+        intervals [2]:
+            xmin = 1.17 
+            xmax = 2.94 
+            text = "spn" 
+        intervals [3]:
+            xmin = 2.94 
+            xmax = 3.01 
+            text = "y" 
+        intervals [4]:
+            xmin = 3.01 
+            xmax = 3.09 
+            text = "e" 
+        intervals [5]:
+            xmin = 3.09 
+            xmax = 3.65 
+            text = "spn" 
+        intervals [6]:
+            xmin = 3.65 
+            xmax = 3.93 
+            text = "spn" 
+        intervals [7]:
+            xmin = 3.93 
+            xmax = 4.38 
+            text = "spn" 
+        intervals [8]:
+            xmin = 4.38 
+            xmax = 4.47 
+            text = "m" 
+        intervals [9]:
+            xmin = 4.47 
+            xmax = 4.64 
+            text = "u" 
+        intervals [10]:
+            xmin = 4.64 
+            xmax = 4.66 
+            text = "g" 
+        intervals [11]:
+            xmin = 4.66 
+            xmax = 4.68 
+            text = "g" 
+        intervals [12]:
+            xmin = 4.68 
+            xmax = 4.78 
+            text = "w" 
+        intervals [13]:
+            xmin = 4.78 
+            xmax = 5.04 
+            text = "a" 
+        intervals [14]:
+            xmin = 5.04 
+            xmax = 5.05 
+            text = "n" 
+        intervals [15]:
+            xmin = 5.05 
+            xmax = 5.07 
+            text = "g" 
+        intervals [16]:
+            xmin = 5.07 
+            xmax = 5.26 
+            text = "a" 
+        intervals [17]:
+            xmin = 5.26 
+            xmax = 5.94 
+            text = "" 
